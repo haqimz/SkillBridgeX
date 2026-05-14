@@ -1,0 +1,1818 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>SkillBridge X — AI Career Recovery Platform</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,300&family=Bebas+Neue&display=swap" rel="stylesheet" />
+<style>
+  :root {
+    --bg: #060810;
+    --surface: #0d1120;
+    --surface2: #131929;
+    --surface3: #171c35;
+    --border: rgba(255,255,255,0.07);
+    --border2: rgba(255,255,255,0.12);
+    --accent: #00e5ff;
+    --accent-dim: rgba(0,229,255,0.12);
+    --accent2: #7c3aed;
+    --accent3: #f97316;
+    --text: #f0f4ff;
+    --muted: #6b7a99;
+    --muted2: #8896b3;
+    --danger: #f43f5e;
+    --danger-dim: rgba(244,63,94,0.12);
+    --safe: #10b981;
+    --safe-dim: rgba(16,185,129,0.12);
+    --warn: #f59e0b;
+    --warn-dim: rgba(245,158,11,0.12);
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 16px;
+    line-height: 1.65;
+    overflow-x: hidden;
+  }
+
+  /* NOISE OVERLAY */
+  body::before {
+    content: '';
+    position: fixed; inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+    pointer-events: none; z-index: 999; opacity: .4;
+  }
+
+  /* NAV */
+  nav {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 1.2rem 5%;
+    background: rgba(6,8,16,0.8);
+    backdrop-filter: blur(20px);
+    border-bottom: 1px solid var(--border);
+  }
+
+  .nav-logo {
+    font-family: 'Syne', sans-serif;
+    font-weight: 800; font-size: 1.25rem;
+    display: flex; align-items: center; gap: .5rem;
+    color: var(--text); text-decoration: none;
+  }
+
+  .nav-logo span { color: var(--accent); }
+
+  .nav-logo-badge {
+    background: var(--accent); color: var(--bg);
+    font-size: .55rem; font-weight: 700; letter-spacing: .1em;
+    padding: .2rem .45rem; border-radius: 4px;
+    text-transform: uppercase;
+  }
+
+  .nav-links { display: flex; gap: 2rem; list-style: none; }
+  .nav-links a { color: var(--muted); text-decoration: none; font-size: .9rem; font-weight: 500; transition: color .2s; }
+  .nav-links a:hover { color: var(--accent); }
+
+  .nav-cta {
+    background: var(--accent); color: var(--bg);
+    padding: .55rem 1.4rem; border-radius: 6px;
+    font-weight: 700; font-size: .875rem; text-decoration: none;
+    transition: opacity .2s, transform .2s;
+  }
+  .nav-cta:hover { opacity: .85; transform: translateY(-1px); }
+
+  /* HERO */
+  #hero {
+    min-height: 100vh;
+    display: flex; flex-direction: column; justify-content: center;
+    padding: 7rem 5% 4rem;
+    position: relative; overflow: hidden;
+  }
+
+  .hero-bg { position: absolute; inset: 0; pointer-events: none; }
+
+  .hero-orb {
+    position: absolute; border-radius: 50%;
+    filter: blur(120px); opacity: .35;
+  }
+
+  .hero-orb-1 { width: 600px; height: 600px; background: var(--accent2); top: -150px; right: -100px; animation: float 8s ease-in-out infinite; }
+  .hero-orb-2 { width: 400px; height: 400px; background: var(--accent); bottom: -100px; left: -80px; animation: float 10s ease-in-out infinite reverse; opacity: .2; }
+  .hero-orb-3 { width: 300px; height: 300px; background: var(--accent3); top: 40%; left: 40%; opacity: .15; animation: float 12s ease-in-out infinite; }
+
+  @keyframes float { 0%,100%{ transform: translateY(0) scale(1); } 50%{ transform: translateY(-30px) scale(1.05); } }
+
+  .hero-grid {
+    display: flex; flex-direction: column;
+    gap: 3rem; align-items: stretch;
+    position: relative; z-index: 1;
+    max-width: 900px; margin: 0 auto; width: 100%;
+  }
+
+  .hero-eyebrow {
+    display: inline-flex; align-items: center; gap: .5rem;
+    background: rgba(0,229,255,0.1); border: 1px solid rgba(0,229,255,0.25);
+    color: var(--accent); border-radius: 100px;
+    padding: .35rem 1rem; font-size: .78rem; font-weight: 600;
+    letter-spacing: .08em; text-transform: uppercase; margin-bottom: 1.5rem;
+    animation: fadeUp .8s ease both;
+  }
+
+  .hero-eyebrow-dot {
+    width: 6px; height: 6px; border-radius: 50%;
+    background: var(--accent); animation: pulse 2s infinite;
+  }
+
+  @keyframes pulse { 0%,100%{ opacity:1; transform:scale(1); } 50%{ opacity:.4; transform:scale(1.5); } }
+
+  .hero-title {
+    font-family: 'Syne', sans-serif;
+    font-weight: 800; font-size: clamp(2.8rem, 5vw, 4.2rem);
+    line-height: 1.05; margin-bottom: 1.5rem;
+    animation: fadeUp .8s .1s ease both;
+  }
+
+  .hero-title em {
+    font-style: normal;
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .hero-sub {
+    color: var(--muted); font-size: 1.1rem; font-weight: 300;
+    max-width: 640px; margin-bottom: 2.5rem;
+    animation: fadeUp .8s .2s ease both;
+  }
+
+  .hero-actions {
+    display: flex; gap: 1rem; flex-wrap: wrap; justify-content: center;
+    animation: fadeUp .8s .3s ease both;
+  }
+
+  .btn-primary {
+    background: var(--accent); color: var(--bg);
+    padding: .875rem 2rem; border-radius: 8px;
+    font-weight: 700; font-size: 1rem; text-decoration: none;
+    display: inline-flex; align-items: center; gap: .5rem;
+    transition: all .2s; box-shadow: 0 0 30px rgba(0,229,255,.3);
+    border: none; cursor: pointer; font-family: 'DM Sans', sans-serif;
+  }
+
+  .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 0 50px rgba(0,229,255,.5); }
+
+  .btn-outline {
+    border: 1px solid var(--border); color: var(--text);
+    padding: .875rem 2rem; border-radius: 8px;
+    font-weight: 500; font-size: 1rem; text-decoration: none;
+    display: inline-flex; align-items: center; gap: .5rem;
+    transition: all .2s;
+    background: rgba(255,255,255,0.03);
+  }
+
+  .btn-outline:hover { border-color: var(--accent); color: var(--accent); }
+
+  .hero-stats {
+    display: flex; gap: 3rem; margin-top: 2.5rem; justify-content: center;
+    animation: fadeUp .8s .4s ease both;
+  }
+
+  .hero-stat-num {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 2rem; color: var(--accent); line-height: 1;
+  }
+
+  .hero-stat-label { font-size: .78rem; color: var(--muted); font-weight: 500; }
+
+  /* HERO RIGHT — LIVE SCANNER */
+  .hero-right { animation: fadeUp .8s .2s ease both; }
+
+  /* SCANNER CARD (Hero embedded) */
+  .scanner-card {
+    background: var(--surface);
+    border: 1px solid var(--border2);
+    border-radius: 20px;
+    overflow: hidden;
+    position: relative;
+  }
+
+  .scanner-card::before {
+    content: '';
+    position: absolute; top: 0; left: 0; right: 0; height: 2px;
+    background: linear-gradient(90deg, var(--accent), var(--accent2), var(--accent3));
+  }
+
+  .input-zone { padding: 1.75rem; }
+
+  .input-label {
+    font-family: 'Syne', sans-serif; font-weight: 700; font-size: .75rem;
+    letter-spacing: .1em; text-transform: uppercase; color: var(--muted2);
+    margin-bottom: .65rem; display: flex; align-items: center; gap: .5rem;
+  }
+
+  .input-label em { color: var(--accent); font-style: normal; }
+
+  .career-input-wrap { display: flex; gap: .75rem; align-items: stretch; }
+
+  .career-input {
+    flex: 1;
+    background: var(--surface2); border: 1px solid var(--border2);
+    border-radius: 10px; padding: .85rem 1rem;
+    color: var(--text); font-family: 'DM Sans', sans-serif; font-size: .9rem;
+    outline: none; transition: border-color .2s, box-shadow .2s;
+    resize: none;
+  }
+  .career-input::placeholder { color: var(--muted); }
+  .career-input:focus {
+    border-color: rgba(0,229,255,.4);
+    box-shadow: 0 0 0 3px rgba(0,229,255,.08);
+  }
+
+  .scan-btn {
+    background: var(--accent); color: var(--bg);
+    border: none; border-radius: 10px;
+    padding: 0 1.4rem; font-family: 'Syne', sans-serif;
+    font-weight: 700; font-size: .875rem; cursor: pointer;
+    display: flex; align-items: center; gap: .4rem;
+    transition: all .2s; white-space: nowrap;
+    box-shadow: 0 0 24px rgba(0,229,255,.25);
+    min-width: 140px; justify-content: center;
+  }
+  .scan-btn:hover:not(:disabled) { transform: translateY(-2px); box-shadow: 0 0 40px rgba(0,229,255,.4); }
+  .scan-btn:disabled { opacity: .5; cursor: not-allowed; transform: none; }
+
+  .input-hints {
+    display: flex; gap: .5rem; flex-wrap: wrap; margin-top: .85rem;
+  }
+
+  .hint-chip {
+    background: var(--surface3); border: 1px solid var(--border);
+    border-radius: 100px; padding: .25rem .7rem;
+    font-size: .72rem; color: var(--muted2); cursor: pointer;
+    transition: all .2s;
+  }
+  .hint-chip:hover { border-color: rgba(0,229,255,.3); color: var(--accent); background: var(--accent-dim); }
+
+  .card-divider { height: 1px; background: var(--border); }
+
+  /* LOADING */
+  .loading-state {
+    display: none; flex-direction: column; align-items: center; gap: 1.25rem;
+    padding: 2.5rem; text-align: center;
+  }
+  .loading-state.visible { display: flex; }
+
+  .scanner-anim { position: relative; width: 70px; height: 70px; }
+  .scanner-anim-ring {
+    position: absolute; inset: 0; border-radius: 50%;
+    border: 2px solid transparent; border-top-color: var(--accent);
+    animation: spin 1s linear infinite;
+  }
+  .scanner-anim-ring:nth-child(2) { inset: 8px; border-top-color: var(--accent2); animation-duration: 1.4s; animation-direction: reverse; }
+  .scanner-anim-ring:nth-child(3) { inset: 16px; border-top-color: var(--accent3); animation-duration: 1.8s; }
+  @keyframes spin { to{ transform: rotate(360deg); } }
+
+  .loading-steps { display: flex; flex-direction: column; gap: .35rem; }
+  .loading-step {
+    font-size: .78rem; color: var(--muted); display: flex; align-items: center; gap: .4rem;
+    opacity: 0; animation: stepIn .4s ease forwards;
+  }
+  @keyframes stepIn { to{ opacity: 1; } }
+
+  /* RESULT ZONE */
+  .result-zone { padding: 1.75rem; display: none; }
+  .result-zone.visible { display: block; }
+
+  .risk-section {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 1.25rem;
+    margin-bottom: 1.25rem;
+  }
+
+  .risk-gauge-wrap {
+    background: var(--surface2); border: 1px solid var(--border);
+    border-radius: 14px; padding: 1.25rem;
+  }
+
+  .risk-gauge-title {
+    font-family: 'Syne', sans-serif; font-weight: 700; font-size: .72rem;
+    letter-spacing: .08em; text-transform: uppercase; color: var(--muted2);
+    margin-bottom: 1rem;
+  }
+
+  .gauge-container { position: relative; width: 130px; margin: 0 auto .75rem; }
+  .gauge-svg { width: 100%; height: auto; }
+  .gauge-score-text {
+    position: absolute; inset: 0;
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    margin-top: 8px;
+  }
+  .gauge-num { font-family: 'Bebas Neue', sans-serif; font-size: 2.5rem; line-height: 1; }
+  .gauge-label { font-size: .62rem; color: var(--muted2); font-weight: 500; }
+
+  .risk-verdict {
+    text-align: center; padding: .45rem 1rem;
+    border-radius: 7px; font-size: .72rem; font-weight: 700;
+    letter-spacing: .05em; text-transform: uppercase;
+    margin-top: .4rem;
+  }
+  .risk-verdict.high { background: var(--danger-dim); color: var(--danger); border: 1px solid rgba(244,63,94,.2); }
+  .risk-verdict.medium { background: var(--warn-dim); color: var(--warn); border: 1px solid rgba(245,158,11,.2); }
+  .risk-verdict.low { background: var(--safe-dim); color: var(--safe); border: 1px solid rgba(16,185,129,.2); }
+
+  .risk-breakdown {
+    background: var(--surface2); border: 1px solid var(--border);
+    border-radius: 14px; padding: 1.25rem;
+  }
+  .breakdown-title {
+    font-family: 'Syne', sans-serif; font-weight: 700; font-size: .72rem;
+    letter-spacing: .08em; text-transform: uppercase; color: var(--muted2);
+    margin-bottom: 1rem;
+  }
+  .breakdown-items { display: flex; flex-direction: column; gap: .7rem; }
+  .breakdown-item-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: .3rem; font-size: .75rem; }
+  .breakdown-item-label { color: var(--muted2); }
+  .breakdown-item-val { font-weight: 700; font-size: .8rem; }
+  .breakdown-bar-bg { background: rgba(255,255,255,.06); border-radius: 100px; height: 5px; overflow: hidden; }
+  .breakdown-bar { height: 100%; border-radius: 100px; transition: width 1s ease; }
+
+  .analysis-box {
+    background: var(--surface2); border: 1px solid var(--border);
+    border-radius: 14px; padding: 1.25rem; margin-bottom: 1.25rem;
+  }
+  .analysis-title {
+    font-family: 'Syne', sans-serif; font-weight: 700; font-size: .72rem;
+    letter-spacing: .08em; text-transform: uppercase; color: var(--muted2);
+    margin-bottom: .75rem; display: flex; align-items: center; gap: .4rem;
+  }
+  .analysis-text { font-size: .82rem; color: var(--muted2); line-height: 1.65; }
+  .analysis-text strong { color: var(--text); font-weight: 600; }
+
+  .pivot-section-title {
+    font-family: 'Syne', sans-serif; font-weight: 800; font-size: 1rem;
+    margin-bottom: .3rem; display: flex; align-items: center; gap: .4rem;
+  }
+  .pivot-section-sub { color: var(--muted2); font-size: .8rem; margin-bottom: 1rem; }
+
+  .pivot-cards { display: flex; flex-direction: column; gap: 1rem; }
+
+  .pivot-card {
+    background: var(--surface2); border: 1px solid var(--border);
+    border-radius: 12px; padding: 1.1rem;
+    display: grid; grid-template-columns: auto 1fr auto;
+    gap: 1rem; align-items: start;
+    transition: all .3s; cursor: default; position: relative; overflow: hidden;
+  }
+  .pivot-card::before {
+    content: ''; position: absolute; inset: 0; opacity: 0;
+    background: radial-gradient(400px circle at var(--mx,50%) var(--my,50%), rgba(0,229,255,.05), transparent 60%);
+    transition: opacity .3s; pointer-events: none;
+  }
+  .pivot-card:hover { border-color: rgba(0,229,255,.25); transform: translateX(3px); }
+  .pivot-card:hover::before { opacity: 1; }
+
+  .pivot-rank {
+    font-family: 'Bebas Neue', sans-serif; font-size: 1.8rem;
+    color: rgba(255,255,255,.08); line-height: 1; min-width: 26px;
+  }
+  .pivot-card:nth-child(1) .pivot-rank { color: rgba(0,229,255,.2); }
+  .pivot-card:nth-child(2) .pivot-rank { color: rgba(124,58,237,.25); }
+  .pivot-card:nth-child(3) .pivot-rank { color: rgba(249,115,22,.2); }
+
+  .pivot-role {
+    font-family: 'Syne', sans-serif; font-weight: 700; font-size: .9rem;
+    margin-bottom: .25rem; display: flex; align-items: center; gap: .4rem; flex-wrap: wrap;
+  }
+  .pivot-badge {
+    font-size: .6rem; padding: .15rem .45rem; border-radius: 100px;
+    font-weight: 700; letter-spacing: .06em; text-transform: uppercase;
+  }
+  .pivot-badge.hot { background: rgba(249,115,22,.12); color: var(--accent3); border: 1px solid rgba(249,115,22,.2); }
+  .pivot-badge.growth { background: rgba(16,185,129,.1); color: var(--safe); border: 1px solid rgba(16,185,129,.2); }
+  .pivot-badge.new { background: var(--accent-dim); color: var(--accent); border: 1px solid rgba(0,229,255,.2); }
+
+  .pivot-desc { font-size: .78rem; color: var(--muted2); line-height: 1.55; margin-bottom: .65rem; }
+
+  .pivot-skills { display: flex; flex-wrap: wrap; gap: .3rem; }
+  .pivot-skill-tag {
+    background: var(--surface3); border: 1px solid var(--border);
+    border-radius: 5px; padding: .15rem .5rem;
+    font-size: .67rem; color: var(--muted2);
+  }
+  .pivot-skill-tag.new-skill { border-color: rgba(0,229,255,.2); color: var(--accent); background: var(--accent-dim); }
+
+  .pivot-score-col { display: flex; flex-direction: column; align-items: flex-end; gap: .35rem; min-width: 76px; }
+  .pivot-match-num { font-family: 'Bebas Neue', sans-serif; font-size: 2rem; line-height: 1; color: var(--safe); }
+  .pivot-match-label { font-size: .6rem; color: var(--muted); text-align: right; }
+  .pivot-timeline {
+    background: var(--surface3); border: 1px solid var(--border);
+    border-radius: 6px; padding: .25rem .5rem;
+    font-size: .65rem; color: var(--muted2); text-align: center;
+  }
+
+  .roadmap-teaser {
+    margin-top: 1.25rem; border-radius: 12px; padding: 1.25rem;
+    background: linear-gradient(135deg, rgba(0,229,255,.05), rgba(124,58,237,.07));
+    border: 1px solid rgba(0,229,255,.15);
+    display: flex; align-items: center; justify-content: space-between; gap: 1rem; flex-wrap: wrap;
+  }
+  .roadmap-teaser-title { font-family: 'Syne', sans-serif; font-weight: 700; font-size: .95rem; margin-bottom: .2rem; }
+  .roadmap-teaser-sub { font-size: .78rem; color: var(--muted2); }
+  .roadmap-cta {
+    background: var(--accent); color: var(--bg);
+    border: none; border-radius: 8px; padding: .65rem 1.4rem;
+    font-family: 'Syne', sans-serif; font-weight: 700; font-size: .82rem;
+    cursor: pointer; white-space: nowrap; transition: all .2s;
+    box-shadow: 0 0 20px rgba(0,229,255,.2);
+  }
+  .roadmap-cta:hover { transform: translateY(-2px); box-shadow: 0 0 40px rgba(0,229,255,.35); }
+
+  .error-box {
+    background: var(--danger-dim); border: 1px solid rgba(244,63,94,.25);
+    border-radius: 10px; padding: .85rem 1rem;
+    color: var(--danger); font-size: .82rem; display: none; margin-top: .85rem;
+  }
+  .error-box.visible { display: block; }
+
+  /* SECTIONS BASE */
+  section { padding: 6rem 5%; }
+  .section-max { max-width: 1280px; margin: 0 auto; }
+
+  .section-eyebrow {
+    display: inline-block;
+    font-size: .72rem; letter-spacing: .15em; text-transform: uppercase;
+    color: var(--accent); font-weight: 700; margin-bottom: .75rem;
+  }
+
+  .section-title {
+    font-family: 'Syne', sans-serif;
+    font-size: clamp(2rem, 4vw, 3rem); font-weight: 800;
+    line-height: 1.1; margin-bottom: 1rem;
+  }
+
+  .section-sub { color: var(--muted); font-size: 1.05rem; max-width: 560px; }
+
+  /* PROBLEM */
+  #problem { background: var(--surface); }
+
+  .problem-grid {
+    display: grid; grid-template-columns: 1fr 1fr;
+    gap: 4rem; align-items: center;
+  }
+
+  .problem-list { list-style: none; display: flex; flex-direction: column; gap: 1.25rem; margin-top: 2rem; }
+
+  .problem-item {
+    display: flex; gap: 1rem; align-items: flex-start;
+    padding: 1.25rem; background: var(--surface2);
+    border-radius: 12px; border: 1px solid var(--border);
+  }
+
+  .problem-icon { font-size: 1.5rem; min-width: 40px; text-align: center; margin-top: 2px; }
+  .problem-item-title { font-family: 'Syne', sans-serif; font-weight: 700; font-size: .95rem; margin-bottom: .25rem; }
+  .problem-item-desc { font-size: .875rem; color: var(--muted); }
+
+  .stats-panel { display: grid; grid-template-columns: 1fr 1fr; gap: 1.25rem; }
+
+  .stat-card {
+    background: var(--bg); border: 1px solid var(--border);
+    border-radius: 16px; padding: 1.75rem;
+    transition: border-color .3s, transform .3s;
+  }
+
+  .stat-card:hover { border-color: rgba(0,229,255,.3); transform: translateY(-4px); }
+  .stat-card:first-child { grid-column: 1/-1; }
+
+  .stat-big { font-family: 'Bebas Neue', sans-serif; font-size: 3.5rem; color: var(--accent); line-height: 1; }
+  .stat-card p { color: var(--muted); font-size: .85rem; margin-top: .5rem; line-height: 1.5; }
+  .stat-source { font-size: .72rem; color: rgba(255,255,255,.2); margin-top: .5rem; }
+
+  /* SOLUTION / FEATURES */
+  .features-header {
+    display: flex; justify-content: space-between; align-items: flex-end;
+    flex-wrap: wrap; gap: 1.5rem; margin-bottom: 4rem;
+  }
+
+  .features-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5rem; }
+
+  .feature-card {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: 18px; padding: 2rem;
+    transition: all .3s; position: relative; overflow: hidden;
+  }
+
+  .feature-card::after {
+    content: '';
+    position: absolute; inset: 0;
+    background: radial-gradient(400px circle at var(--x,50%) var(--y,50%), rgba(0,229,255,.06), transparent 40%);
+    pointer-events: none;
+  }
+
+  .feature-card:hover { border-color: rgba(0,229,255,.25); transform: translateY(-4px); }
+  .feature-card.large { grid-column: span 2; }
+
+  .feature-icon {
+    width: 52px; height: 52px; border-radius: 12px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1.5rem; margin-bottom: 1.25rem;
+    background: rgba(0,229,255,.08); border: 1px solid rgba(0,229,255,.15);
+  }
+
+  .feature-icon.purple { background: rgba(124,58,237,.1); border-color: rgba(124,58,237,.2); }
+  .feature-icon.orange { background: rgba(249,115,22,.1); border-color: rgba(249,115,22,.2); }
+  .feature-icon.green { background: rgba(16,185,129,.1); border-color: rgba(16,185,129,.2); }
+  .feature-icon.red { background: rgba(244,63,94,.1); border-color: rgba(244,63,94,.2); }
+
+  .feature-tag {
+    display: inline-block;
+    background: rgba(0,229,255,.1); color: var(--accent);
+    border-radius: 100px; padding: .2rem .65rem;
+    font-size: .68rem; font-weight: 700; letter-spacing: .08em;
+    text-transform: uppercase; margin-bottom: .75rem;
+  }
+
+  .feature-title { font-family: 'Syne', sans-serif; font-weight: 700; font-size: 1.2rem; margin-bottom: .75rem; }
+  .feature-desc { color: var(--muted); font-size: .9rem; line-height: 1.65; }
+
+  /* TECH STACK */
+  #tech { background: var(--surface); }
+
+  .tech-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 1.25rem; margin-top: 3rem; }
+
+  .tech-card {
+    background: var(--bg); border: 1px solid var(--border);
+    border-radius: 14px; padding: 1.5rem 1rem; text-align: center;
+    transition: all .3s;
+  }
+  .tech-card:hover { border-color: rgba(0,120,212,.5); transform: translateY(-4px); }
+  .tech-logo { font-size: 2rem; margin-bottom: .75rem; }
+  .tech-name { font-family: 'Syne', sans-serif; font-weight: 700; font-size: .85rem; }
+  .tech-role { font-size: .72rem; color: var(--muted); margin-top: .25rem; }
+
+  /* COMPARISON */
+  .table-wrap { overflow-x: auto; margin-top: 3rem; border-radius: 16px; border: 1px solid var(--border); }
+  table { width: 100%; border-collapse: collapse; }
+  thead { background: var(--surface2); }
+  th {
+    padding: 1rem 1.25rem; text-align: left;
+    font-family: 'Syne', sans-serif; font-weight: 700;
+    font-size: .8rem; letter-spacing: .05em; text-transform: uppercase;
+    color: var(--muted); border-bottom: 1px solid var(--border);
+    white-space: nowrap;
+  }
+  td { padding: 1rem 1.25rem; font-size: .875rem; border-bottom: 1px solid var(--border); vertical-align: middle; }
+  tr:last-child td { border-bottom: none; }
+  tr.highlight-row { background: rgba(0,229,255,.04); }
+  tr.highlight-row td { color: var(--text); font-weight: 500; }
+  tr.highlight-row td:first-child { color: var(--accent); font-weight: 700; }
+  tbody tr:not(.highlight-row) td { color: var(--muted); }
+  tbody tr:not(.highlight-row):hover { background: rgba(255,255,255,.02); }
+  .check { color: var(--safe); }
+  .cross { color: var(--danger); }
+
+  /* IMPACT */
+  #impact { background: var(--surface); }
+  .impact-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 2rem; margin-top: 3rem; }
+  .impact-card {
+    background: var(--bg); border: 1px solid var(--border);
+    border-radius: 18px; padding: 2rem; transition: all .3s;
+  }
+  .impact-card:hover { transform: translateY(-4px); border-color: rgba(124,58,237,.3); }
+  .impact-level { font-size: .72rem; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; margin-bottom: 1rem; display: flex; align-items: center; gap: .5rem; }
+  .impact-dot { width: 8px; height: 8px; border-radius: 50%; }
+  .impact-list { list-style: none; display: flex; flex-direction: column; gap: .75rem; }
+  .impact-list li { display: flex; gap: .6rem; font-size: .875rem; color: var(--muted); align-items: flex-start; }
+  .impact-list li::before { content: '→'; color: var(--accent); font-weight: 700; min-width: 16px; }
+
+  /* LEAN CANVAS */
+  .canvas-grid {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    grid-template-rows: auto auto;
+    gap: 1px;
+    background: var(--border);
+    border: 1px solid var(--border);
+    border-radius: 16px; overflow: hidden; margin-top: 3rem;
+  }
+  .canvas-cell { background: var(--surface); padding: 1.5rem; transition: background .2s; }
+  .canvas-cell:hover { background: var(--surface2); }
+  .canvas-num { font-family: 'Bebas Neue', sans-serif; font-size: 1.5rem; color: rgba(255,255,255,.12); line-height: 1; margin-bottom: .5rem; }
+  .canvas-cell-title { font-family: 'Syne', sans-serif; font-weight: 700; font-size: .875rem; margin-bottom: .75rem; color: var(--accent); }
+  .canvas-cell ul { list-style: none; display: flex; flex-direction: column; gap: .4rem; }
+  .canvas-cell li { font-size: .78rem; color: var(--muted); padding-left: .75rem; position: relative; }
+  .canvas-cell li::before { content: '·'; position: absolute; left: 0; color: var(--accent); font-size: 1rem; }
+
+  /* CTA */
+  #cta {
+    padding: 8rem 5%;
+    text-align: center; position: relative; overflow: hidden;
+  }
+  #cta::before {
+    content: '';
+    position: absolute; inset: 0;
+    background: radial-gradient(ellipse 80% 60% at 50% 50%, rgba(0,229,255,.07), transparent);
+    pointer-events: none;
+  }
+  .cta-tagline {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(3rem, 8vw, 7rem);
+    line-height: 1; margin-bottom: 1.5rem;
+    background: linear-gradient(135deg, var(--text), var(--accent));
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+  }
+  .cta-sub { color: var(--muted); font-size: 1.15rem; max-width: 500px; margin: 0 auto 2.5rem; }
+  .cta-buttons { display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap; }
+
+  /* FOOTER */
+  footer {
+    border-top: 1px solid var(--border);
+    padding: 2rem 5%;
+    display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 1rem;
+  }
+  .footer-brand { font-family: 'Syne', sans-serif; font-weight: 700; font-size: .9rem; }
+  .footer-brand span { color: var(--accent); }
+  .footer-meta { font-size: .78rem; color: var(--muted); }
+  .footer-team { font-size: .78rem; color: var(--muted); }
+
+  /* ANIMATIONS */
+  @keyframes fadeUp { from{ opacity:0; transform:translateY(30px); } to{ opacity:1; transform:translateY(0); } }
+  .fade-in { opacity: 0; transform: translateY(24px); transition: opacity .7s ease, transform .7s ease; }
+  .fade-in.visible { opacity: 1; transform: translateY(0); }
+
+  /* RESPONSIVE */
+  @media(max-width: 900px) {
+    .hero-grid, .problem-grid { grid-template-columns: 1fr; }
+    .hero-right { order: -1; }
+    .features-grid { grid-template-columns: 1fr 1fr; }
+    .feature-card.large { grid-column: span 2; }
+    .tech-grid { grid-template-columns: repeat(3, 1fr); }
+    .impact-grid { grid-template-columns: 1fr; }
+    .canvas-grid { grid-template-columns: repeat(2, 1fr); }
+    .nav-links { display: none; }
+    .risk-section { grid-template-columns: 1fr; }
+  }
+
+  @media(max-width: 600px) {
+    .features-grid, .stats-panel { grid-template-columns: 1fr; }
+    .feature-card.large { grid-column: span 1; }
+    .tech-grid { grid-template-columns: repeat(2, 1fr); }
+    .pivot-card { grid-template-columns: auto 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <a href="#" class="nav-logo">
+    SkillBridge<span>X</span>
+    <span class="nav-logo-badge">Beta</span>
+  </a>
+  <ul class="nav-links">
+    <li><a href="#problem">Masalah</a></li>
+    <li><a href="#solution">Solusi</a></li>
+    <li><a href="#tech">Teknologi</a></li>
+    <li><a href="#impact">Dampak</a></li>
+  </ul>
+  <a href="#hero-scanner" class="nav-cta">Coba Gratis →</a>
+</nav>
+
+<!-- HERO -->
+<section id="hero">
+  <div class="hero-bg">
+    <div class="hero-orb hero-orb-1"></div>
+    <div class="hero-orb hero-orb-2"></div>
+    <div class="hero-orb hero-orb-3"></div>
+  </div>
+  <div class="hero-grid">
+    <div class="hero-left" style="text-align:center; display:flex; flex-direction:column; align-items:center;">
+      <div class="hero-eyebrow">
+        <span class="hero-eyebrow-dot"></span>
+        Imagine Cup Edition · Kelompok RJ-45
+      </div>
+      <h1 class="hero-title">
+        AI mengambil pekerjaan manusia.<br/>
+        <em>Kami pakai AI untuk menyelamatkannya.</em>
+      </h1>
+      <p class="hero-sub">
+        SkillBridge X adalah platform AI career recovery yang menganalisis risiko otomatisasi,
+        menemukan pivot karier terbaik, dan membangun roadmap transisi 90 hari — personal, gratis, dan skalabel.
+      </p>
+      <div class="hero-actions">
+        <a href="#hero-scanner" class="btn-primary">⚡ Scan Karier Sekarang</a>
+        <a href="#problem" class="btn-outline">📊 Kenapa Ini Penting</a>
+      </div>
+      <div class="hero-stats">
+        <div>
+          <div class="hero-stat-num">375JT</div>
+          <div class="hero-stat-label">Pekerja global perlu reskill</div>
+        </div>
+        <div>
+          <div class="hero-stat-num">23JT+</div>
+          <div class="hero-stat-label">Pekerjaan Indonesia berisiko</div>
+        </div>
+        <div>
+          <div class="hero-stat-num">90</div>
+          <div class="hero-stat-label">Hari untuk pivot karier</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- HERO RIGHT — LIVE AI SCANNER -->
+    <div class="hero-right" id="hero-scanner">
+      <div class="scanner-card">
+        <!-- INPUT ZONE -->
+        <div class="input-zone">
+          <div class="input-label">
+            <em>🎯</em> Apa pekerjaan / karier kamu saat ini?
+          </div>
+          <div class="career-input-wrap">
+            <textarea
+              class="career-input"
+              id="careerInput"
+              rows="3"
+              placeholder="Contoh: Admin data entry di perusahaan logistik, sudah 3 tahun. Sehari-hari mengisi spreadsheet, input invoice, dan rekap laporan manual..."
+            ></textarea>
+            <button class="scan-btn" id="scanBtn" onclick="runScan()">
+              <span id="scanBtnIcon">⚡</span>
+              <span id="scanBtnText">Scan Karier</span>
+            </button>
+          </div>
+          <div class="input-hints">
+            <span style="font-size:.7rem;color:var(--muted);align-self:center;">Coba:</span>
+            <div class="hint-chip" onclick="runDemoScan('operator_pabrik')">Operator Pabrik</div>
+            <div class="hint-chip" onclick="runDemoScan('cs_bank')">CS Bank</div>
+            <div class="hint-chip" onclick="runDemoScan('admin_akuntansi')">Admin Akuntansi</div>
+            <div class="hint-chip" onclick="runDemoScan('driver_ojol')">Driver Ojol</div>
+            <div class="hint-chip" onclick="runDemoScan('fresh_graduate')">Fresh Graduate</div>
+          </div>
+          <div class="error-box" id="errorBox">⚠ Terjadi kesalahan. Pastikan koneksi internet stabil dan coba lagi.</div>
+        </div>
+
+        <!-- DIVIDER -->
+        <div class="card-divider" id="divider" style="display:none"></div>
+
+        <!-- LOADING STATE -->
+        <div class="loading-state" id="loadingState">
+          <div class="scanner-anim">
+            <div class="scanner-anim-ring"></div>
+            <div class="scanner-anim-ring"></div>
+            <div class="scanner-anim-ring"></div>
+          </div>
+          <div class="loading-steps" id="loadingSteps">
+            <div class="loading-step" style="animation-delay:.2s"><span>🔍</span> Menganalisis profil pekerjaan...</div>
+            <div class="loading-step" style="animation-delay:.9s"><span>⚙️</span> Menghitung skor risiko otomatisasi...</div>
+            <div class="loading-step" style="animation-delay:1.8s"><span>🧩</span> Mendeteksi transferable skills...</div>
+            <div class="loading-step" style="animation-delay:2.7s"><span>🎯</span> Menjalankan Smart Pivot Engine...</div>
+            <div class="loading-step" style="animation-delay:3.6s"><span>✨</span> Menyusun rekomendasi personal...</div>
+          </div>
+        </div>
+
+        <!-- RESULT ZONE -->
+        <div class="result-zone" id="resultZone">
+          <!-- RISK SECTION -->
+          <div class="risk-section">
+            <div class="risk-gauge-wrap">
+              <div class="risk-gauge-title">📊 Skor Risiko Otomatisasi</div>
+              <div class="gauge-container">
+                <svg class="gauge-svg" viewBox="0 0 160 100" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M 20 90 A 60 60 0 0 1 140 90" fill="none" stroke="rgba(255,255,255,0.06)" stroke-width="10" stroke-linecap="round"/>
+                  <path id="gaugeFill" d="M 20 90 A 60 60 0 0 1 140 90" fill="none" stroke="url(#gaugeGrad)" stroke-width="10" stroke-linecap="round" stroke-dasharray="188" stroke-dashoffset="188"/>
+                  <defs>
+                    <linearGradient id="gaugeGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+                      <stop offset="0%" stop-color="#10b981"/>
+                      <stop offset="50%" stop-color="#f59e0b"/>
+                      <stop offset="100%" stop-color="#f43f5e"/>
+                    </linearGradient>
+                  </defs>
+                </svg>
+                <div class="gauge-score-text">
+                  <div class="gauge-num" id="gaugeNum" style="color:var(--warn)">—</div>
+                  <div class="gauge-label">/ 100</div>
+                </div>
+              </div>
+              <div class="risk-verdict" id="riskVerdict">Menganalisis...</div>
+            </div>
+
+            <div class="risk-breakdown">
+              <div class="breakdown-title">🔬 Breakdown Risiko</div>
+              <div class="breakdown-items" id="breakdownItems"></div>
+            </div>
+          </div>
+
+          <!-- ANALYSIS BOX -->
+          <div class="analysis-box">
+            <div class="analysis-title">🤖 <span>Analisis AI — Mengapa Risiko Ini?</span></div>
+            <div class="analysis-text" id="analysisText">Memuat analisis...</div>
+          </div>
+
+          <!-- PIVOT ENGINE -->
+          <div class="pivot-section-title">🎯 Smart Pivot Engine — <span style="color:var(--accent)">Top 3 Matches</span></div>
+          <div class="pivot-section-sub">Karier terbaik berdasarkan skill yang sudah kamu miliki:</div>
+          <div class="pivot-cards" id="pivotCards"></div>
+
+          <!-- ROADMAP TEASER -->
+          <div class="roadmap-teaser">
+            <div>
+              <div class="roadmap-teaser-title">🗓️ Siap memulai transisi karier?</div>
+              <div class="roadmap-teaser-sub">Dapatkan 90-Day Transition Roadmap personal berdasarkan hasil scan ini — gratis.</div>
+            </div>
+            <button class="roadmap-cta">Buat Roadmap 90 Hari →</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PROBLEM -->
+<section id="problem">
+  <div class="section-max">
+    <div class="problem-grid">
+      <div>
+        <span class="section-eyebrow fade-in">01 — Identifikasi Masalah</span>
+        <h2 class="section-title fade-in">Jutaan pekerja terancam, tapi <em style="font-style:normal; color:var(--accent)">tanpa arah</em></h2>
+        <p class="section-sub fade-in">Di era AI dan otomatisasi, masalahnya bukan hanya kehilangan pekerjaan — tapi tidak tahu harus ke mana setelahnya.</p>
+        <ul class="problem-list">
+          <li class="problem-item fade-in">
+            <div class="problem-icon">🎯</div>
+            <div>
+              <div class="problem-item-title">Tidak tahu apakah pekerjaan mereka berisiko</div>
+              <div class="problem-item-desc">Pekerja tidak memiliki akses ke data prediksi otomatisasi yang relevan untuk profesi mereka.</div>
+            </div>
+          </li>
+          <li class="problem-item fade-in">
+            <div class="problem-icon">🧭</div>
+            <div>
+              <div class="problem-item-title">Tidak tahu harus berpindah ke mana</div>
+              <div class="problem-item-desc">Tidak ada panduan karier yang personal berdasarkan skill aktual yang sudah dimiliki.</div>
+            </div>
+          </li>
+          <li class="problem-item fade-in">
+            <div class="problem-icon">📚</div>
+            <div>
+              <div class="problem-item-title">Tidak tahu harus belajar apa</div>
+              <div class="problem-item-desc">Banyak platform kursus tersedia, tapi tidak ada yang menggabungkan analisis gap skill dengan rekomendasi belajar gratis.</div>
+            </div>
+          </li>
+          <li class="problem-item fade-in">
+            <div class="problem-icon">🗺️</div>
+            <div>
+              <div class="problem-item-title">Tidak ada rencana transisi yang konkret</div>
+              <div class="problem-item-desc">Akibatnya, banyak yang terjebak dalam ketidakpastian dan akhirnya menjadi pengangguran jangka panjang.</div>
+            </div>
+          </li>
+        </ul>
+      </div>
+      <div class="stats-panel">
+        <div class="stat-card fade-in">
+          <div class="stat-big">182 JT</div>
+          <p>Orang perlu bertransisi karier — 85 juta pekerjaan hilang, 97 juta pekerjaan baru muncul yang membutuhkan skill berbeda.</p>
+          <div class="stat-source">📌 World Economic Forum — Future of Jobs 2025</div>
+        </div>
+        <div class="stat-card fade-in">
+          <div class="stat-big">375 JT</div>
+          <p>Pekerja global (14% tenaga kerja dunia) perlu berganti kategori pekerjaan pada 2030.</p>
+          <div class="stat-source">📌 McKinsey Global Institute</div>
+        </div>
+        <div class="stat-card fade-in">
+          <div class="stat-big">23 JT+</div>
+          <p>Pekerjaan di Indonesia berisiko tinggi terdampak otomatisasi AI dalam waktu dekat.</p>
+          <div class="stat-source">📌 ILO, 2023</div>
+        </div>
+        <div class="stat-card fade-in" style="background: rgba(244,63,94,.05); border-color: rgba(244,63,94,.2);">
+          <div class="stat-big" style="color: var(--danger)">&lt;15%</div>
+          <p>Perusahaan di negara berkembang yang memiliki program reskilling terstruktur untuk karyawannya.</p>
+          <div class="stat-source">📌 WEF Skills Report</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SOLUTION -->
+<section id="solution">
+  <div class="section-max">
+    <div class="features-header">
+      <div>
+        <span class="section-eyebrow fade-in">02 — Solusi</span>
+        <h2 class="section-title fade-in">Satu platform,<br/><em style="font-style:normal; color:var(--accent)">end-to-end</em> career recovery</h2>
+      </div>
+      <p class="section-sub fade-in" style="text-align:right; max-width:340px">Dari diagnosis risiko → roadmap → coaching → job readiness, semua dalam satu tempat.</p>
+    </div>
+    <div class="features-grid">
+      <div class="feature-card large fade-in">
+        <div class="feature-icon">🔍</div>
+        <span class="feature-tag">Core Feature #1</span>
+        <h3 class="feature-title">AI Career Risk Scanner</h3>
+        <p class="feature-desc">Masukkan pekerjaan saat ini, dan platform kami akan menganalisis risiko otomatisasi dalam 1–3 tahun ke depan berdasarkan data WEF, O*NET, dan McKinsey. Skor risiko 0–100 yang transparan dan berbasis data riil — <strong style="color:var(--accent)">coba langsung di bagian atas halaman ini!</strong></p>
+      </div>
+      <div class="feature-card fade-in">
+        <div class="feature-icon purple">🧩</div>
+        <span class="feature-tag">Core Feature #2</span>
+        <h3 class="feature-title">Smart Pivot Engine</h3>
+        <p class="feature-desc">Identifikasi pekerjaan baru yang paling realistis berdasarkan transferable skills yang sudah dimiliki. Bukan rekomendasi generik — tapi analisis semantik dari skill aktual pengguna.</p>
+      </div>
+      <div class="feature-card fade-in">
+        <div class="feature-icon orange">🗓️</div>
+        <span class="feature-tag">Core Feature #3</span>
+        <h3 class="feature-title">90-Day Transition Plan</h3>
+        <p class="feature-desc">Roadmap harian yang terstruktur, personal, dan actionable. Dengan milestone mingguan, sumber belajar gratis (YouTube, Coursera audit, GitHub), dan tracking progres real-time.</p>
+      </div>
+      <div class="feature-card fade-in">
+        <div class="feature-icon green">🤖</div>
+        <span class="feature-tag">Core Feature #4</span>
+        <h3 class="feature-title">AI Mentor Coach</h3>
+        <p class="feature-desc">Coach pribadi berbasis conversational AI. Tersedia 24/7, memahami konteks karier pengguna, dan memberikan guidance yang relevan — bukan jawaban generik.</p>
+      </div>
+      <div class="feature-card fade-in">
+        <div class="feature-icon red">📈</div>
+        <span class="feature-tag">Core Feature #5</span>
+        <h3 class="feature-title">Job Ready Score</h3>
+        <p class="feature-desc">Indikator kesiapan kerja yang terukur dan visual. Dashboard progres yang menunjukkan seberapa siap pengguna untuk pivot ke karier baru — dengan benchmark industri.</p>
+      </div>
+      <div class="feature-card fade-in">
+        <div class="feature-icon">🏢</div>
+        <span class="feature-tag">B2B Feature</span>
+        <h3 class="feature-title">Company Talent Dashboard</h3>
+        <p class="feature-desc">Portal rekruter untuk menemukan talent yang sedang aktif reskill. Menghubungkan pencari kerja yang sedang bertransisi dengan perusahaan yang membutuhkan skill baru.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- TECH -->
+<section id="tech">
+  <div class="section-max">
+    <span class="section-eyebrow fade-in">03 — Teknologi</span>
+    <h2 class="section-title fade-in">Dibangun di atas <em style="font-style:normal; color:var(--accent)">Microsoft Azure</em></h2>
+    <p class="section-sub fade-in">Stack AI end-to-end yang skalabel, andal, dan enterprise-grade untuk negara berkembang.</p>
+    <div class="tech-grid">
+      <div class="tech-card fade-in">
+        <div class="tech-logo">⚡</div>
+        <div class="tech-name">Azure OpenAI (GPT-4o)</div>
+        <div class="tech-role">Analisis skill gap, 90-Day Plan generator, AI Mentor Coach</div>
+      </div>
+      <div class="tech-card fade-in">
+        <div class="tech-logo">🧠</div>
+        <div class="tech-name">Azure Machine Learning</div>
+        <div class="tech-role">Model prediksi risiko otomatisasi · Skor 0–100 per profesi</div>
+      </div>
+      <div class="tech-card fade-in">
+        <div class="tech-logo">🔤</div>
+        <div class="tech-name">Azure AI Language</div>
+        <div class="tech-role">NLP · Ekstraksi skill dari job description · Semantic matching</div>
+      </div>
+      <div class="tech-card fade-in">
+        <div class="tech-logo">🔎</div>
+        <div class="tech-name">Azure AI Search</div>
+        <div class="tech-role">Indeks ribuan sumber belajar gratis · Rekomendasi relevan</div>
+      </div>
+      <div class="tech-card fade-in">
+        <div class="tech-logo">📊</div>
+        <div class="tech-name">Power BI Embedded</div>
+        <div class="tech-role">Dashboard Job Ready Score · Visualisasi progres pengguna</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- COMPARISON -->
+<section id="comparison">
+  <div class="section-max">
+    <span class="section-eyebrow fade-in">04 — Keunggulan Kompetitif</span>
+    <h2 class="section-title fade-in">Kami bukan platform kursus.<br/>Kami adalah platform <em style="font-style:normal;color:var(--accent)">career recovery</em>.</h2>
+    <div class="table-wrap fade-in">
+      <table>
+        <thead>
+          <tr>
+            <th>Platform</th>
+            <th>Risk Scanner</th>
+            <th>Smart Pivot</th>
+            <th>90-Day Roadmap</th>
+            <th>AI Mentor</th>
+            <th>100% Gratis</th>
+            <th>Inklusif</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td>Coursera / edX</td><td class="cross">✗</td><td class="cross">✗</td><td class="cross">✗</td><td class="cross">✗</td><td class="cross">✗</td><td class="cross">✗</td></tr>
+          <tr><td>LinkedIn Learning</td><td class="cross">✗</td><td class="cross">✗</td><td class="cross">✗</td><td class="cross">✗</td><td class="cross">✗</td><td class="cross">✗</td></tr>
+          <tr><td>Google Career Cert.</td><td class="cross">✗</td><td class="cross">✗</td><td class="cross">✗</td><td class="cross">✗</td><td class="check">✓</td><td>Terbatas</td></tr>
+          <tr><td>Bootcamp Online</td><td class="cross">✗</td><td class="cross">✗</td><td>Generik</td><td class="cross">✗</td><td class="cross">✗</td><td class="cross">✗</td></tr>
+          <tr class="highlight-row"><td>⚡ SkillBridge X</td><td class="check">✓ Real-time</td><td class="check">✓ Personalized</td><td class="check">✓ 90 Hari</td><td class="check">✓ GPT-4o</td><td class="check">✓ Freemium</td><td class="check">✓ Semua kalangan</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<!-- IMPACT -->
+<section id="impact">
+  <div class="section-max">
+    <span class="section-eyebrow fade-in">05 — Dampak</span>
+    <h2 class="section-title fade-in">Dari individu hingga<br/><em style="font-style:normal; color:var(--accent)">ketahanan ekonomi nasional</em></h2>
+    <div class="impact-grid">
+      <div class="impact-card fade-in">
+        <div class="impact-level" style="color: var(--accent)">
+          <span class="impact-dot" style="background:var(--accent)"></span>
+          Level Individual
+        </div>
+        <ul class="impact-list">
+          <li>Pekerja mendapatkan arah yang jelas untuk transisi karier</li>
+          <li>Kecemasan akibat ketidakpastian karier berkurang signifikan</li>
+          <li>Proses reskilling lebih efisien: bulan, bukan tahun</li>
+          <li>Akses ke learning resources gratis tanpa barrier ekonomi</li>
+        </ul>
+      </div>
+      <div class="impact-card fade-in">
+        <div class="impact-level" style="color: var(--accent2)">
+          <span class="impact-dot" style="background:var(--accent2)"></span>
+          Level Industri
+        </div>
+        <ul class="impact-list">
+          <li>Perusahaan lebih mudah menemukan talent yang aktif reskill</li>
+          <li>Skill mismatch antara pencari kerja dan industri berkurang</li>
+          <li>Pipeline talent yang lebih relevan dan siap kerja</li>
+          <li>Efisiensi proses rekrutmen berbasis data skill aktual</li>
+        </ul>
+      </div>
+      <div class="impact-card fade-in">
+        <div class="impact-level" style="color: var(--accent3)">
+          <span class="impact-dot" style="background:var(--accent3)"></span>
+          Level Sosial & Nasional
+        </div>
+        <ul class="impact-list">
+          <li>Pengangguran struktural akibat AI dapat dimitigasi</li>
+          <li>Transisi menuju ekonomi digital lebih inklusif dan merata</li>
+          <li>Mendukung program reskilling nasional pemerintah</li>
+          <li>Relevan untuk 375 juta pekerja global yang perlu bertransisi</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- LEAN CANVAS -->
+<section id="canvas" style="background:var(--surface)">
+  <div class="section-max">
+    <span class="section-eyebrow fade-in">06 — Lean Canvas</span>
+    <h2 class="section-title fade-in">Business model yang <em style="font-style:normal;color:var(--accent)">terstruktur</em></h2>
+    <div class="canvas-grid fade-in">
+      <div class="canvas-cell">
+        <div class="canvas-num">1</div>
+        <div class="canvas-cell-title">🔴 Problem</div>
+        <ul>
+          <li>Jutaan pekerja terancam otomatisasi & AI</li>
+          <li>Tidak tahu ke pekerjaan apa harus berpindah</li>
+          <li>Tidak ada panduan reskilling yang personal & gratis</li>
+          <li>Gap besar antara kebutuhan industri & kemampuan tenaga kerja</li>
+        </ul>
+      </div>
+      <div class="canvas-cell">
+        <div class="canvas-num">4</div>
+        <div class="canvas-cell-title">⚡ Solution</div>
+        <ul>
+          <li>AI Career Risk Scanner</li>
+          <li>Smart Pivot Engine</li>
+          <li>90-Day Transition Plan</li>
+          <li>AI Mentor Coach (GPT-4o)</li>
+          <li>Job Ready Score</li>
+          <li>Company Talent Dashboard</li>
+        </ul>
+      </div>
+      <div class="canvas-cell" style="background:rgba(0,229,255,.04); border: 1px solid rgba(0,229,255,.1);">
+        <div class="canvas-num">2</div>
+        <div class="canvas-cell-title">💎 Unique Value Proposition</div>
+        <ul>
+          <li>"AI mengambil pekerjaan manusia. Kami memakai AI untuk menyelamatkan karier manusia."</li>
+          <li>Bukan platform kursus — platform career recovery</li>
+          <li>End-to-end journey dalam satu platform</li>
+          <li>Future-Proofing Human Careers berbasis data & AI nyata</li>
+        </ul>
+      </div>
+      <div class="canvas-cell">
+        <div class="canvas-num">3</div>
+        <div class="canvas-cell-title">🏁 Existing Alternatives</div>
+        <ul>
+          <li>Coursera / LinkedIn Learning → fokus kursus, mahal</li>
+          <li>Google / YouTube → tidak ada jalur karier konkret</li>
+          <li>Bootcamp → tidak terjangkau semua kalangan</li>
+          <li>Konsultan karier → tidak skalabel</li>
+        </ul>
+      </div>
+      <div class="canvas-cell">
+        <div class="canvas-num">5</div>
+        <div class="canvas-cell-title">🚀 Unfair Advantage</div>
+        <ul>
+          <li>Data automation risk berbasis riset WEF & McKinsey</li>
+          <li>AI pivot engine analisis transferable skills personal</li>
+          <li>Rekomendasi belajar gratis — inklusif semua ekonomi</li>
+          <li>Azure OpenAI + ML + AI Search end-to-end</li>
+        </ul>
+      </div>
+      <div class="canvas-cell">
+        <div class="canvas-num">6</div>
+        <div class="canvas-cell-title">👥 Customer Segments</div>
+        <ul>
+          <li>Pekerja pabrik & manufaktur</li>
+          <li>Admin kantor & customer service</li>
+          <li>Fresh graduate tanpa pengalaman relevan</li>
+          <li>Pekerja usia 30+ yang tertinggal digitalisasi</li>
+          <li>Career switcher ke industri teknologi</li>
+        </ul>
+      </div>
+      <div class="canvas-cell">
+        <div class="canvas-num">7</div>
+        <div class="canvas-cell-title">📊 Key Metrics</div>
+        <ul>
+          <li>Jumlah Career Risk Scan dilakukan</li>
+          <li>Jumlah 90-Day Plan dibuat & diselesaikan</li>
+          <li>Job Ready Score rata-rata pengguna</li>
+          <li>% pengguna berhasil pivot karier</li>
+          <li>Jumlah perusahaan di Talent Dashboard</li>
+        </ul>
+      </div>
+      <div class="canvas-cell">
+        <div class="canvas-num">8</div>
+        <div class="canvas-cell-title">📣 Channels</div>
+        <ul>
+          <li>Media sosial (LinkedIn, TikTok, Instagram)</li>
+          <li>Kemitraan Disnaker & BPJS Ketenagakerjaan</li>
+          <li>Universitas & komunitas belajar online</li>
+          <li>Platform berita teknologi & HR</li>
+          <li>Microsoft Imagine Cup & Azure startup program</li>
+        </ul>
+      </div>
+      <div class="canvas-cell">
+        <div class="canvas-num">9</div>
+        <div class="canvas-cell-title">💰 Cost Structure</div>
+        <ul>
+          <li>Azure OpenAI Service & Azure ML</li>
+          <li>Azure AI Search & Static Web Apps</li>
+          <li>Pengembangan & pemeliharaan aplikasi</li>
+          <li>Kurasi data riset otomatisasi (WEF, McKinsey)</li>
+          <li>Operasional tim & pemasaran awal</li>
+        </ul>
+      </div>
+      <div class="canvas-cell" style="background:rgba(16,185,129,.04); border:1px solid rgba(16,185,129,.1);">
+        <div class="canvas-num">💵</div>
+        <div class="canvas-cell-title" style="color:var(--safe)">Revenue Streams</div>
+        <ul>
+          <li>Freemium — fitur dasar gratis</li>
+          <li>Premium AI Mentor & coaching berbayar</li>
+          <li>B2B: Company Talent Dashboard untuk rekruter</li>
+          <li>Partnership platform edukasi & sertifikasi</li>
+          <li>Government contract: program reskill nasional</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section id="cta">
+  <div class="cta-tagline">Restart Your Career.<br/>Before It's Too Late.</div>
+  <p class="cta-sub">375 juta pekerja perlu bertransisi. SkillBridge X hadir untuk memastikan mereka tidak sendirian dalam perjalanan itu.</p>
+  <div class="cta-buttons">
+    <a href="#hero-scanner" class="btn-primary" style="font-size:1.1rem; padding:1rem 2.5rem;">⚡ Mulai Risk Scanner — Gratis</a>
+    <a href="#solution" class="btn-outline" style="font-size:1.1rem; padding:1rem 2.5rem;">📖 Lihat Semua Fitur</a>
+  </div>
+  <div style="margin-top:3rem; display:flex; justify-content:center; gap:3rem; flex-wrap:wrap;">
+    <div style="text-align:center">
+      <div style="font-family:'Bebas Neue',sans-serif; font-size:2.5rem; color:var(--accent)">100%</div>
+      <div style="font-size:.8rem; color:var(--muted)">Fitur dasar gratis</div>
+    </div>
+    <div style="text-align:center">
+      <div style="font-family:'Bebas Neue',sans-serif; font-size:2.5rem; color:var(--accent)">90</div>
+      <div style="font-size:.8rem; color:var(--muted)">Hari roadmap personal</div>
+    </div>
+    <div style="text-align:center">
+      <div style="font-family:'Bebas Neue',sans-serif; font-size:2.5rem; color:var(--accent)">24/7</div>
+      <div style="font-size:.8rem; color:var(--muted)">AI Mentor tersedia</div>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div>
+    <div class="footer-brand">SkillBridge<span>X</span> · AI Career Recovery Platform</div>
+    <div class="footer-meta">Microsoft Imagine Cup Edition · 2025</div>
+  </div>
+  <div class="footer-team">
+    Kelompok RJ-45 · Alfonsus Betta A.R · Muhamad Haqi Zaidan · Arya Raj · Aditia Azmy Tanjung
+  </div>
+</footer>
+
+<script>
+// Scroll reveal
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(e => {
+    if (e.isIntersecting) { e.target.classList.add('visible'); }
+  });
+}, { threshold: 0.12 });
+document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
+
+// Feature card glow
+document.querySelectorAll('.feature-card').forEach(card => {
+  card.addEventListener('mousemove', e => {
+    const r = card.getBoundingClientRect();
+    card.style.setProperty('--x', `${e.clientX - r.left}px`);
+    card.style.setProperty('--y', `${e.clientY - r.top}px`);
+  });
+});
+
+// Hint fill
+function fillHint(text) {
+  document.getElementById('careerInput').value = text;
+  document.getElementById('careerInput').focus();
+}
+
+// Pre-baked demo data for 5 personas
+const DEMO_DATA = {
+  'operator_pabrik': {
+    "job_title": "Operator Mesin Produksi — Pabrik Tekstil",
+    "risk_score": 82,
+    "risk_level": "HIGH",
+    "risk_label": "Risiko Sangat Tinggi",
+    "breakdown": [
+      {"label": "Repetitivitas Tugas", "score": 92, "desc": "Pekerjaan sangat berulang — pengoperasian mesin tenun dan jahit mudah diotomatisasi oleh robot industri."},
+      {"label": "Ketergantungan pada Data Digital", "score": 55, "desc": "Sebagian proses sudah berbasis sensor dan sistem SCADA di pabrik modern."},
+      {"label": "Interaksi Manusia yang Dibutuhkan", "score": 20, "desc": "Interaksi antar manusia minimal dalam lini produksi — mayoritas bekerja solo dengan mesin."},
+      {"label": "Kebutuhan Kreativitas & Judgment", "score": 18, "desc": "Hampir tidak ada keputusan kreatif; proses mengikuti SOP ketat dan terstandarisasi."}
+    ],
+    "analysis": "Pekerjaan operator mesin produksi tekstil termasuk dalam kategori <strong>paling berisiko</strong> terdampak otomatisasi global. Robot industri seperti lini Fanuc dan ABB sudah mampu mengoperasikan mesin tenun 24 jam tanpa henti dengan presisi lebih tinggi. <strong>McKinsey memperkirakan 60% aktivitas manufaktur tekstil</strong> dapat diotomatisasi penuh pada 2030. Negara seperti Bangladesh dan Vietnam sudah mulai mengadopsi pabrik semi-otomatis. Namun, skill <strong>pemahaman mesin dan koordinasi fisik</strong> yang kamu miliki sangat berharga untuk transisi ke peran teknisi atau quality controller.",
+    "transferable_skills": ["Pemahaman operasional mesin", "Quality control & inspeksi produk", "Kedisiplinan SOP & keselamatan kerja", "Koordinasi tim produksi", "Pemecahan masalah teknis dasar"],
+    "pivots": [
+      {
+        "rank": 1,
+        "role": "Teknisi Pemeliharaan Mesin (Maintenance Tech)",
+        "badge": "HOT",
+        "badge_label": "🔥 Paling Dicari",
+        "match_score": 87,
+        "transition_time": "3–4 bulan",
+        "why": "Kamu sudah paham cara kerja mesin produksi — tinggal upgrade ke skill perawatan dan troubleshooting. Permintaan melonjak karena pabrik butuh orang yang bisa jaga mesin otomatis mereka.",
+        "existing_skills": ["Operasional mesin industri", "Pemahaman SOP pabrik"],
+        "new_skills": ["Dasar elektronika & PLC", "Predictive maintenance", "K3 lanjutan"],
+        "salary_range": "Rp 5–9 juta/bulan",
+        "demand": "Sangat tinggi — naik 38% di 2024"
+      },
+      {
+        "rank": 2,
+        "role": "Quality Control Inspector (QC Analis)",
+        "badge": "GROWTH",
+        "badge_label": "📈 Tumbuh Pesat",
+        "match_score": 79,
+        "transition_time": "2–3 bulan",
+        "why": "Pengalaman inspeksi kualitas di lini produksi adalah fondasi kuat untuk jadi QC profesional — skill yang tidak mudah diotomatisasi penuh karena butuh judgment manusia.",
+        "existing_skills": ["Quality control visual", "Standar produksi tekstil"],
+        "new_skills": ["Statistical Process Control (SPC)", "ISO 9001 dasar", "Dokumentasi digital QC"],
+        "salary_range": "Rp 4–7 juta/bulan",
+        "demand": "Stabil tinggi — dibutuhkan semua industri"
+      },
+      {
+        "rank": 3,
+        "role": "Operator Robot / Cobotik (Cobot Operator)",
+        "badge": "NEW",
+        "badge_label": "🚀 Karier Masa Depan",
+        "match_score": 71,
+        "transition_time": "4–6 bulan",
+        "why": "Pabrik yang beralih ke robot kolaboratif (cobot) butuh operator yang mengerti proses manufaktur sekaligus bisa memprogram & monitor robot — kombinasi skill langka yang kamu bisa kuasai.",
+        "existing_skills": ["Pemahaman lini produksi", "Koordinasi mesin"],
+        "new_skills": ["Pemrograman cobot dasar (Universal Robots)", "HMI/SCADA dasar", "Safety robot industri"],
+        "salary_range": "Rp 6–12 juta/bulan",
+        "demand": "Naik drastis — industri 4.0 Indonesia"
+      }
+    ]
+  },
+  'cs_bank': {
+    "job_title": "Customer Service Representative — Perbankan",
+    "risk_score": 71,
+    "risk_level": "HIGH",
+    "risk_label": "Risiko Tinggi",
+    "breakdown": [
+      {"label": "Repetitivitas Tugas", "score": 74, "desc": "Banyak pertanyaan nasabah bersifat repetitif (saldo, mutasi, prosedur) yang bisa ditangani chatbot AI."},
+      {"label": "Ketergantungan pada Data Digital", "score": 82, "desc": "Hampir semua data nasabah dan transaksi sudah digital — mudah diakses dan diproses oleh AI."},
+      {"label": "Interaksi Manusia yang Dibutuhkan", "score": 55, "desc": "Kasus kompleks dan penanganan emosi nasabah masih butuh sentuhan manusia, namun semakin berkurang."},
+      {"label": "Kebutuhan Kreativitas & Judgment", "score": 38, "desc": "Eskalasi kasus dan keputusan pengecualian kebijakan masih memerlukan judgment manusia."}
+    ],
+    "analysis": "CS Bank berada di <strong>titik kritis transformasi digital</strong>. Bank-bank besar Indonesia seperti BCA, Mandiri, dan BRI sudah men-deploy chatbot AI yang menangani <strong>70–80% pertanyaan rutin nasabah</strong>. Namun, skill komunikasi, empati, dan pemahaman produk keuangan yang kamu miliki adalah aset berharga. Yang terancam bukan kamu sebagai individu, melainkan <strong>fungsi rutinnya</strong>. Peluang besar ada di peran yang menggabungkan skill komunikasi dengan literasi digital dan analitik keuangan.",
+    "transferable_skills": ["Komunikasi dan negosiasi", "Pemahaman produk perbankan & keuangan", "Manajemen komplain & de-eskalasi", "Data entry & sistem CRM", "Kepatuhan regulasi & KYC"],
+    "pivots": [
+      {
+        "rank": 1,
+        "role": "Financial Advisor / Konsultan Keuangan",
+        "badge": "HOT",
+        "badge_label": "🔥 Salary Lebih Tinggi",
+        "match_score": 91,
+        "transition_time": "3–4 bulan",
+        "why": "Kamu sudah paham produk bank dan cara bicara dengan nasabah soal uang — fondasi terkuat untuk jadi financial advisor. Peran ini justru makin dibutuhkan di era ketidakpastian ekonomi.",
+        "existing_skills": ["Pengetahuan produk keuangan", "Komunikasi nasabah"],
+        "new_skills": ["Perencanaan keuangan (CFP dasar)", "Analisis investasi dasar", "Sertifikasi WAPERD/WPPE"],
+        "salary_range": "Rp 6–15 juta/bulan + komisi",
+        "demand": "Sangat tinggi — literasi keuangan naik"
+      },
+      {
+        "rank": 2,
+        "role": "CRM Specialist / Customer Success Manager",
+        "badge": "GROWTH",
+        "badge_label": "📈 Demand Tinggi",
+        "match_score": 84,
+        "transition_time": "2–3 bulan",
+        "why": "Skill manajemen hubungan pelanggan dan CRM system yang kamu gunakan sehari-hari di bank sangat relevan untuk startup dan perusahaan teknologi yang butuh CS Manager.",
+        "existing_skills": ["Manajemen hubungan pelanggan", "Sistem CRM", "Resolusi komplain"],
+        "new_skills": ["CRM tools (HubSpot/Salesforce)", "Customer journey mapping", "Data analitik dasar"],
+        "salary_range": "Rp 6–12 juta/bulan",
+        "demand": "Tinggi — semua startup butuh ini"
+      },
+      {
+        "rank": 3,
+        "role": "Compliance & KYC Analyst",
+        "badge": "GROWTH",
+        "badge_label": "📊 Stabil & Tumbuh",
+        "match_score": 76,
+        "transition_time": "3–5 bulan",
+        "why": "Pengalaman KYC dan kepatuhan regulasi bank adalah skill langka yang justru semakin dibutuhkan di era fintech dan anti-pencucian uang (AML) yang semakin ketat.",
+        "existing_skills": ["Prosedur KYC & AML", "Regulasi perbankan", "Dokumentasi nasabah"],
+        "new_skills": ["Regulasi OJK lanjutan", "AML/CFT sertifikasi", "RegTech tools dasar"],
+        "salary_range": "Rp 7–14 juta/bulan",
+        "demand": "Stabil tinggi — regulasi makin ketat"
+      }
+    ]
+  },
+  'admin_akuntansi': {
+    "job_title": "Admin Akuntansi & Keuangan",
+    "risk_score": 78,
+    "risk_level": "HIGH",
+    "risk_label": "Risiko Tinggi",
+    "breakdown": [
+      {"label": "Repetitivitas Tugas", "score": 85, "desc": "Input jurnal, rekonsiliasi, dan laporan bulanan sangat berulang dan bisa diotomatisasi tools seperti Xero, QuickBooks AI, atau RPA."},
+      {"label": "Ketergantungan pada Data Digital", "score": 90, "desc": "Hampir semua pekerjaan berbasis data digital — spreadsheet, sistem ERP, dan invoice digital mudah diproses AI."},
+      {"label": "Interaksi Manusia yang Dibutuhkan", "score": 22, "desc": "Koordinasi minimal; mayoritas pekerjaan dilakukan solo dengan sistem dan dokumen digital."},
+      {"label": "Kebutuhan Kreativitas & Judgment", "score": 30, "desc": "Beberapa keputusan akuntansi membutuhkan interpretasi, namun sebagian besar bersifat rule-based dan bisa diotomatisasi."}
+    ],
+    "analysis": "Peran admin akuntansi tradisional menghadapi <strong>tekanan otomatisasi paling besar</strong> di antara peran office. Software seperti QuickBooks AI, Xero, dan SAP S/4HANA sudah mengotomatiskan <strong>80% tugas input manual</strong>. Namun ini bukan akhir — ini adalah upgrade. <strong>Akuntan yang bisa menggunakan AI tools dan menginterpretasi data</strong>, bukan sekadar memasukkannya, akan semakin berharga. Skill analytical thinking dan pemahaman angka keuangan kamu adalah fondasi yang sangat kuat untuk naik level.",
+    "transferable_skills": ["Pemahaman siklus akuntansi", "Analisis laporan keuangan", "Ketelitian & detail-oriented", "Microsoft Excel lanjutan", "Pemahaman pajak & compliance dasar"],
+    "pivots": [
+      {
+        "rank": 1,
+        "role": "Akuntan Digital / AI-Assisted Accountant",
+        "badge": "HOT",
+        "badge_label": "🔥 Evolusi Natural",
+        "match_score": 93,
+        "transition_time": "2–3 bulan",
+        "why": "Ini bukan karier baru, ini adalah upgrade dari posisimu sekarang. Dengan menguasai tools AI akuntansi modern, kamu bergeser dari yang digantikan AI menjadi yang mengoperasikan AI.",
+        "existing_skills": ["Siklus akuntansi lengkap", "Laporan keuangan", "Rekonsiliasi"],
+        "new_skills": ["Xero / QuickBooks AI", "Power BI untuk keuangan", "Otomatisasi Excel (VBA/Python dasar)"],
+        "salary_range": "Rp 6–12 juta/bulan",
+        "demand": "Sangat tinggi — gap skill besar"
+      },
+      {
+        "rank": 2,
+        "role": "Financial Data Analyst",
+        "badge": "GROWTH",
+        "badge_label": "📈 Karier Naik Level",
+        "match_score": 81,
+        "transition_time": "3–5 bulan",
+        "why": "Pemahaman mendalam tentang angka keuangan adalah fondasi analyst — kamu tinggal belajar cara memvisualisasikan dan menginterpretasi data untuk pengambilan keputusan bisnis.",
+        "existing_skills": ["Analisis laporan keuangan", "Excel lanjutan", "Pemahaman bisnis"],
+        "new_skills": ["SQL dasar", "Power BI / Tableau", "Statistik bisnis dasar"],
+        "salary_range": "Rp 8–18 juta/bulan",
+        "demand": "Sangat tinggi — semua industri butuh"
+      },
+      {
+        "rank": 3,
+        "role": "Tax Consultant / Konsultan Pajak",
+        "badge": "GROWTH",
+        "badge_label": "📊 Stabil & Bernilai",
+        "match_score": 74,
+        "transition_time": "4–6 bulan",
+        "why": "Interpretasi regulasi pajak dan perencanaan fiskal adalah area yang sangat sulit diotomatisasi penuh — AI butuh expert manusia untuk meninjau dan mengambil keputusan akhir.",
+        "existing_skills": ["Pemahaman pajak dasar", "Laporan keuangan", "Compliance"],
+        "new_skills": ["Brevet Pajak A & B", "e-Filing & e-SPT", "Perencanaan pajak korporasi"],
+        "salary_range": "Rp 7–20 juta/bulan",
+        "demand": "Stabil tinggi — regulasi pajak makin kompleks"
+      }
+    ]
+  },
+  'driver_ojol': {
+    "job_title": "Driver Ojek Online & Pengiriman Barang",
+    "risk_score": 65,
+    "risk_level": "MEDIUM",
+    "risk_label": "Risiko Sedang-Tinggi",
+    "breakdown": [
+      {"label": "Repetitivitas Tugas", "score": 60, "desc": "Rute pengiriman berulang namun setiap hari berbeda lokasi dan kondisi — semi-repetitif."},
+      {"label": "Ketergantungan pada Data Digital", "score": 75, "desc": "Sudah sepenuhnya berbasis platform digital (Gojek/Grab) — data pergerakan, rute, dan transaksi tercatat real-time."},
+      {"label": "Interaksi Manusia yang Dibutuhkan", "score": 65, "desc": "Interaksi dengan pelanggan, navigasi situasional, dan penanganan masalah lapangan masih butuh judgment manusia."},
+      {"label": "Kebutuhan Kreativitas & Judgment", "score": 48, "desc": "Keputusan situasional di jalan (macet, cuaca, pelanggan sulit) membutuhkan adaptasi real-time yang belum bisa digantikan penuh."}
+    ],
+    "analysis": "Driver ojol berada di <strong>zona risiko menengah-tinggi</strong> yang unik. Di satu sisi, kendaraan otonom dan drone pengiriman sedang dikembangkan. Di sisi lain, <strong>infrastruktur Indonesia yang kompleks</strong> — kemacetan, gang sempit, kondisi jalan beragam — membuat otomatisasi penuh masih 7–10 tahun lagi. Yang lebih mendesak adalah <strong>kompetisi platform yang semakin ketat</strong> dan menurunnya pendapatan per-trip. Skill navigasi, manajemen waktu, dan customer service yang kamu asah setiap hari adalah aset tersembunyi yang bisa dimonetisasi jauh lebih besar.",
+    "transferable_skills": ["Navigasi & geografis kota", "Manajemen waktu & efisiensi rute", "Customer service lapangan", "Kerja mandiri & disiplin", "Pemahaman platform digital & aplikasi"],
+    "pivots": [
+      {
+        "rank": 1,
+        "role": "Kurir & Logistik Last-Mile Supervisor",
+        "badge": "HOT",
+        "badge_label": "🔥 Naik Level",
+        "match_score": 88,
+        "transition_time": "2–3 bulan",
+        "why": "Pengalaman operasional lapangan pengiriman sehari-hari adalah pengetahuan yang jarang dimiliki orang kantoran — supervisor logistik butuh orang yang tahu realita lapangan.",
+        "existing_skills": ["Operasional pengiriman lapangan", "Manajemen rute", "Koordinasi tim lapangan"],
+        "new_skills": ["Manajemen tim kecil", "Dashboard logistik (Shipper/Sicepat)", "KPI delivery & reporting"],
+        "salary_range": "Rp 4–7 juta/bulan + tunjangan",
+        "demand": "Tinggi — e-commerce terus tumbuh"
+      },
+      {
+        "rank": 2,
+        "role": "Merchant Acquisition & Field Sales (Gojek/Grab/Shopee)",
+        "badge": "GROWTH",
+        "badge_label": "📈 Income Lebih Stabil",
+        "match_score": 79,
+        "transition_time": "1–2 bulan",
+        "why": "Kamu sudah tahu cara kerja platform, sudah kenal ekosistem merchant, dan terbiasa berinteraksi dengan orang baru setiap hari — itu adalah 80% dari skill field sales.",
+        "existing_skills": ["Pemahaman ekosistem platform", "Komunikasi pelanggan", "Mobilitas tinggi"],
+        "new_skills": ["Teknik presentasi & closing", "CRM mobile apps", "Negosiasi kontrak dasar"],
+        "salary_range": "Rp 5–10 juta/bulan + komisi",
+        "demand": "Selalu dibutuhkan — target ekspansi merchant"
+      },
+      {
+        "rank": 3,
+        "role": "Digital UMKM Enabler / Agen Platform",
+        "badge": "NEW",
+        "badge_label": "🚀 Peluang Baru",
+        "match_score": 71,
+        "transition_time": "2–4 bulan",
+        "why": "Jutaan UMKM di Indonesia belum go-digital. Dengan pengalaman operasional platform kamu, kamu bisa jadi konsultan/agen yang membantu warung dan toko kecil masuk ke Tokopedia, Shopee, dan GrabFood.",
+        "existing_skills": ["Pemahaman platform digital", "Relasi komunitas lokal", "Operasional mobile"],
+        "new_skills": ["Setup toko online", "Foto produk & copywriting", "Iklan berbayar dasar (Meta Ads)"],
+        "salary_range": "Rp 4–8 juta/bulan + komisi",
+        "demand": "Tumbuh pesat — program digitalisasi UMKM"
+      }
+    ]
+  },
+  'fresh_graduate': {
+    "job_title": "Fresh Graduate S1 — Belum Pengalaman Kerja",
+    "risk_score": 38,
+    "risk_level": "MEDIUM",
+    "risk_label": "Risiko Sedang",
+    "breakdown": [
+      {"label": "Repetitivitas Tugas", "score": 30, "desc": "Sebagai fresh grad, kamu belum terikat pada satu pekerjaan repetitif — ini keunggulan besar untuk masuk ke peran yang tepat."},
+      {"label": "Ketergantungan pada Data Digital", "score": 50, "desc": "Generasi digital native — sudah terbiasa dengan tools digital, namun skill spesifik industri masih perlu dibangun."},
+      {"label": "Interaksi Manusia yang Dibutuhkan", "score": 60, "desc": "Kemampuan kolaborasi, belajar cepat, dan adaptasi tim sangat tinggi pada fresh graduate."},
+      {"label": "Kebutuhan Kreativitas & Judgment", "score": 55, "desc": "Potensi kreativitas tinggi, namun belum teruji di lingkungan profesional — ini saatnya membangun."}
+    ],
+    "analysis": "Sebagai fresh graduate, kamu sebenarnya berada di <strong>posisi paling strategis</strong>: belum terikat pola kerja lama dan masih bisa membentuk skill set yang relevan di era AI. Risikomu bukan dari otomatisasi, tapi dari <strong>persaingan masuk kerja yang semakin ketat</strong> dan ekspektasi employer yang naik. <strong>Employer kini mencari fresh grad yang tech-savvy</strong> — bisa menggunakan AI tools, punya data literacy, dan memahami digital workflow. Berita baiknya: ini semua bisa dipelajari dalam 2–4 bulan dengan sumber gratis.",
+    "transferable_skills": ["Kemampuan belajar cepat", "Adaptasi teknologi baru", "Energi dan motivasi tinggi", "Kemampuan riset & akademis", "Komunikasi presentasi (dari kuliah)"],
+    "pivots": [
+      {
+        "rank": 1,
+        "role": "Digital Marketing Specialist",
+        "badge": "HOT",
+        "badge_label": "🔥 Entry Level Terbaik",
+        "match_score": 85,
+        "transition_time": "2–3 bulan",
+        "why": "Digital marketing adalah pintu masuk terbaik bagi fresh grad — bisa masuk dari berbagai jurusan, demand sangat tinggi, dan skill bisa dibangun dari tools gratis seperti Google, Meta, dan Canva.",
+        "existing_skills": ["Komunikasi & copywriting", "Riset konten", "Media sosial"],
+        "new_skills": ["Google Analytics & Ads", "Meta Ads Manager", "SEO dasar & konten strategi"],
+        "salary_range": "Rp 4–8 juta/bulan",
+        "demand": "Sangat tinggi — semua bisnis butuh"
+      },
+      {
+        "rank": 2,
+        "role": "Junior Data Analyst",
+        "badge": "GROWTH",
+        "badge_label": "📈 Karier Tahan AI",
+        "match_score": 77,
+        "transition_time": "3–4 bulan",
+        "why": "Data analyst adalah salah satu karier paling future-proof — justru dibutuhkan untuk menginterpretasi output AI. Tidak perlu coding, bisa mulai dari Excel, SQL, dan Power BI.",
+        "existing_skills": ["Kemampuan analitis akademis", "Berpikir logis & terstruktur"],
+        "new_skills": ["SQL dasar", "Excel & Power BI", "Statistik deskriptif terapan"],
+        "salary_range": "Rp 5–10 juta/bulan",
+        "demand": "Sangat tinggi — gap talent besar"
+      },
+      {
+        "rank": 3,
+        "role": "AI Tools Specialist / Prompt Engineer",
+        "badge": "NEW",
+        "badge_label": "🚀 Karier Masa Depan",
+        "match_score": 72,
+        "transition_time": "1–2 bulan",
+        "why": "Ini adalah karier yang belum ada 2 tahun lalu — dan fresh grad yang kuasai AI tools lebih dulu punya competitive advantage besar di pasar kerja yang masih kekurangan talent ini.",
+        "existing_skills": ["Adaptasi teknologi cepat", "Kemampuan belajar mandiri", "Komunikasi tertulis"],
+        "new_skills": ["Prompt engineering (ChatGPT, Claude)", "AI workflow automation (Zapier/Make)", "No-code tools (Notion AI, Gamma)"],
+        "salary_range": "Rp 5–15 juta/bulan",
+        "demand": "Naik drastis — kebutuhan baru global"
+      }
+    ]
+  }
+};
+
+// Run demo scan with pre-baked data
+function runDemoScan(key) {
+  const demoData = DEMO_DATA[key];
+  if (!demoData) return;
+
+  const inputMap = {
+    'operator_pabrik': 'Operator mesin produksi di pabrik tekstil, 5 tahun pengalaman',
+    'cs_bank': 'Customer service representative di bank, menangani komplain nasabah via telepon dan chat',
+    'admin_akuntansi': 'Admin akuntansi dan keuangan, input jurnal, rekonsiliasi, buat laporan bulanan',
+    'driver_ojol': 'Driver ojek online dan pengiriman barang, sudah 4 tahun',
+    'fresh_graduate': 'Fresh graduate S1 manajemen, belum ada pengalaman kerja'
+  };
+
+  document.getElementById('careerInput').value = inputMap[key];
+  document.getElementById('errorBox').classList.remove('visible');
+
+  const btn = document.getElementById('scanBtn');
+  btn.disabled = true;
+  document.getElementById('scanBtnText').textContent = 'Menganalisis...';
+  document.getElementById('scanBtnIcon').textContent = '⏳';
+
+  document.getElementById('divider').style.display = 'block';
+  document.getElementById('loadingState').classList.add('visible');
+  document.getElementById('resultZone').classList.remove('visible');
+
+  const steps = document.querySelectorAll('.loading-step');
+  steps.forEach(s => { s.style.opacity = '0'; s.style.animation = 'none'; });
+  setTimeout(() => {
+    steps.forEach((s, i) => {
+      s.style.animation = `stepIn .4s ${0.2 + i * 0.9}s ease forwards`;
+    });
+  }, 50);
+
+  document.getElementById('hero-scanner').scrollIntoView({ behavior: 'smooth', block: 'start' });
+
+  // Simulate a brief delay for the loading animation, then show results
+  setTimeout(() => {
+    document.getElementById('loadingState').classList.remove('visible');
+    btn.disabled = false;
+    document.getElementById('scanBtnText').textContent = 'Scan Ulang';
+    document.getElementById('scanBtnIcon').textContent = '🔄';
+    renderResults(demoData);
+  }, 4200);
+}
+
+// Main scan function
+async function runScan() {
+  const input = document.getElementById('careerInput').value.trim();
+
+  // Validasi input kosong
+  if (!input) {
+    document.getElementById('careerInput').focus();
+    return;
+  }
+
+  // Reset tampilan error
+  const errorBox = document.getElementById('errorBox');
+  errorBox.classList.remove('visible');
+
+  // Update status tombol
+  const btn = document.getElementById('scanBtn');
+  btn.disabled = true;
+  document.getElementById('scanBtnText').textContent = 'Menganalisis...';
+  document.getElementById('scanBtnIcon').textContent = '⏳';
+
+  // Tampilkan loading state
+  document.getElementById('divider').style.display = 'block';
+  document.getElementById('loadingState').classList.add('visible');
+  document.getElementById('resultZone').classList.remove('visible');
+
+  // Restart loading step animations
+  const steps = document.querySelectorAll('.loading-step');
+  steps.forEach(s => { s.style.opacity = '0'; s.style.animation = 'none'; });
+  setTimeout(() => {
+    steps.forEach((s, i) => {
+      s.style.animation = `stepIn .4s ${0.2 + i * 0.9}s ease forwards`;
+    });
+  }, 50);
+
+  // Scroll ke area scanner agar progres terlihat
+  document.getElementById('hero-scanner').scrollIntoView({ behavior: 'smooth', block: 'start' });
+
+  const prompt = `Kamu adalah SkillBridge X, platform AI career recovery untuk membantu pekerja bertransisi di era otomatisasi.
+
+Pengguna memasukkan info karier ini:
+"${input}"
+
+Tugas kamu:
+1. Analisis risiko otomatisasi pekerjaan ini (0-100)
+2. Identifikasi faktor-faktor risiko
+3. Temukan 3 karier pivot terbaik berdasarkan transferable skills
+
+Respond ONLY dengan JSON valid berikut (tanpa markdown, tanpa komentar, tanpa teks lain):
+
+{
+  "job_title": "Nama pekerjaan yang terdeteksi",
+  "risk_score": <angka 0-100>,
+  "risk_level": "<'HIGH' jika >65, 'MEDIUM' jika 35-65, 'LOW' jika <35>",
+  "risk_label": "<label singkat risiko dalam Bahasa Indonesia, maks 4 kata>",
+  "breakdown": [
+    {"label": "Repetitivitas Tugas", "score": <0-100>, "desc": "<1 kalimat penjelasan singkat>"},
+    {"label": "Ketergantungan pada Data Digital", "score": <0-100>, "desc": "<1 kalimat>"},
+    {"label": "Interaksi Manusia yang Dibutuhkan", "score": <0-100>, "desc": "<1 kalimat>"},
+    {"label": "Kebutuhan Kreativitas & Judgment", "score": <0-100>, "desc": "<1 kalimat>"}
+  ],
+  "analysis": "<Paragraf 3-4 kalimat dalam Bahasa Indonesia yang menjelaskan mengapa pekerjaan ini berisiko/aman, apa yang bisa diotomatisasi, dan tren industri. Gunakan <strong> tag untuk kata kunci penting.>",
+  "transferable_skills": ["<skill 1>", "<skill 2>", "<skill 3>", "<skill 4>", "<skill 5>"],
+  "pivots": [
+    {
+      "rank": 1,
+      "role": "<Nama karier baru>",
+      "badge": "<'HOT' atau 'GROWTH' atau 'NEW'>",
+      "badge_label": "<label badge>",
+      "match_score": <75-96>,
+      "transition_time": "<contoh: 2-3 bulan>",
+      "why": "<1-2 kalimat mengapa ini cocok berdasarkan skill mereka>",
+      "existing_skills": ["<skill lama yang relevan>", "<skill lama>"],
+      "new_skills": ["<skill baru perlu dipelajari>", "<skill baru>", "<skill baru>"],
+      "salary_range": "<contoh: Rp 4-8 juta/bulan>",
+      "demand": "<contoh: Sangat tinggi — naik 43% 2024>"
+    },
+    {
+      "rank": 2,
+      "role": "<Nama karier baru>",
+      "badge": "<'HOT' atau 'GROWTH' atau 'NEW'>",
+      "badge_label": "<label badge>",
+      "match_score": <70-88>,
+      "transition_time": "<contoh: 3-4 bulan>",
+      "why": "<1-2 kalimat>",
+      "existing_skills": ["<skill lama>", "<skill lama>"],
+      "new_skills": ["<skill baru>", "<skill baru>"],
+      "salary_range": "<contoh: Rp 5-10 juta/bulan>",
+      "demand": "<contoh: Tinggi — tren naik>"
+    },
+    {
+      "rank": 3,
+      "role": "<Nama karier baru>",
+      "badge": "<'HOT' atau 'GROWTH' atau 'NEW'>",
+      "badge_label": "<label badge>",
+      "match_score": <65-82>,
+      "transition_time": "<contoh: 4-6 bulan>",
+      "why": "<1-2 kalimat>",
+      "existing_skills": ["<skill lama>"],
+      "new_skills": ["<skill baru>", "<skill baru>", "<skill baru>"],
+      "salary_range": "<contoh: Rp 6-12 juta/bulan>",
+      "demand": "<contoh: Tinggi dan terus bertumbuh>"
+    }
+  ]
+}`;
+
+  // API key disimpan di Azure Function environment variable (OPENROUTER_API_KEY)
+  // Frontend hanya memanggil proxy endpoint, bukan OpenRouter langsung
+  try {
+    const response = await fetch("/api/scan", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({ prompt })
+    });
+
+    if (!response.ok) throw new Error(`API error: ${response.status}`);
+
+    const data = await response.json();
+    const raw = data.content;
+
+    let result;
+    try {
+      const clean = raw.replace(/```json|```/g, '').trim();
+      result = JSON.parse(clean);
+    } catch(e) {
+      const match = raw.match(/\{[\s\S]*\}/);
+      if (match) result = JSON.parse(match[0]);
+      else throw new Error('Parse error');
+    }
+
+    renderResults(result);
+
+  } catch(err) {
+    console.error(err);
+    errorBox.classList.add('visible');
+    errorBox.textContent = `⚠ Error: ${err.message || 'Terjadi kesalahan saat menganalisis. Pastikan koneksi internet stabil dan coba lagi.'}`;
+    document.getElementById('loadingState').classList.remove('visible');
+  } finally {
+    btn.disabled = false;
+    document.getElementById('scanBtnText').textContent = 'Scan Ulang';
+    document.getElementById('scanBtnIcon').textContent = '🔄';
+  }
+}
+
+function renderResults(data) {
+  document.getElementById('loadingState').classList.remove('visible');
+  document.getElementById('resultZone').classList.add('visible');
+
+  // GAUGE
+  const score = data.risk_score;
+  const gaugeNum = document.getElementById('gaugeNum');
+  gaugeNum.textContent = score;
+  const scoreColor = score >= 65 ? 'var(--danger)' : score >= 35 ? 'var(--warn)' : 'var(--safe)';
+  gaugeNum.style.color = scoreColor;
+
+  const fill = document.getElementById('gaugeFill');
+  const circumference = 188;
+  const offset = circumference - (score / 100) * circumference;
+  setTimeout(() => {
+    fill.style.transition = 'stroke-dashoffset 1.2s ease';
+    fill.style.strokeDashoffset = offset;
+  }, 100);
+
+  // VERDICT
+  const verdict = document.getElementById('riskVerdict');
+  verdict.textContent = data.risk_level === 'HIGH'
+    ? `⚠ ${data.risk_label} — Risiko Tinggi`
+    : data.risk_level === 'MEDIUM'
+    ? `⚡ ${data.risk_label} — Risiko Sedang`
+    : `✅ ${data.risk_label} — Risiko Rendah`;
+  verdict.className = 'risk-verdict ' + (data.risk_level === 'HIGH' ? 'high' : data.risk_level === 'MEDIUM' ? 'medium' : 'low');
+
+  // BREAKDOWN
+  const breakdownEl = document.getElementById('breakdownItems');
+  breakdownEl.innerHTML = '';
+  const breakdownColors = { high: '#f43f5e', medium: '#f59e0b', low: '#10b981' };
+  data.breakdown.forEach(item => {
+    const color = item.score >= 65 ? breakdownColors.high : item.score >= 35 ? breakdownColors.medium : breakdownColors.low;
+    breakdownEl.innerHTML += `
+      <div class="breakdown-item">
+        <div class="breakdown-item-header">
+          <span class="breakdown-item-label">${item.label}</span>
+          <span class="breakdown-item-val" style="color:${color}">${item.score}</span>
+        </div>
+        <div class="breakdown-bar-bg">
+          <div class="breakdown-bar" style="width:0%;background:${color}" data-width="${item.score}%"></div>
+        </div>
+        <div style="font-size:.68rem;color:var(--muted);margin-top:.25rem;">${item.desc}</div>
+      </div>`;
+  });
+  setTimeout(() => {
+    document.querySelectorAll('.breakdown-bar').forEach(bar => {
+      bar.style.transition = 'width 1s ease';
+      bar.style.width = bar.dataset.width;
+    });
+  }, 200);
+
+  // ANALYSIS
+  document.getElementById('analysisText').innerHTML = data.analysis;
+
+  // PIVOT CARDS
+  const pivotEl = document.getElementById('pivotCards');
+  pivotEl.innerHTML = '';
+  const badgeClass = { HOT: 'hot', GROWTH: 'growth', NEW: 'new' };
+
+  data.pivots.forEach((p, i) => {
+    const existingTags = p.existing_skills.map(s => `<span class="pivot-skill-tag">${s}</span>`).join('');
+    const newTags = p.new_skills.map(s => `<span class="pivot-skill-tag new-skill">+ ${s}</span>`).join('');
+
+    pivotEl.innerHTML += `
+      <div class="pivot-card" onmousemove="trackMouse(event, this)">
+        <div class="pivot-rank">0${p.rank}</div>
+        <div class="pivot-info">
+          <div class="pivot-role">
+            ${p.role}
+            <span class="pivot-badge ${badgeClass[p.badge] || 'new'}">${p.badge_label || p.badge}</span>
+          </div>
+          <div class="pivot-desc">${p.why}</div>
+          <div style="margin-bottom:.4rem;">
+            <div style="font-size:.65rem;color:var(--muted);margin-bottom:.25rem;font-weight:600;letter-spacing:.06em;text-transform:uppercase;">Skill kamu yang relevan</div>
+            <div class="pivot-skills">${existingTags}</div>
+          </div>
+          <div>
+            <div style="font-size:.65rem;color:var(--accent);margin-bottom:.25rem;font-weight:600;letter-spacing:.06em;text-transform:uppercase;">Perlu dipelajari</div>
+            <div class="pivot-skills">${newTags}</div>
+          </div>
+        </div>
+        <div class="pivot-score-col">
+          <div class="pivot-match-num">${p.match_score}<span style="font-size:.875rem;color:var(--muted)">%</span></div>
+          <div class="pivot-match-label">skill match</div>
+          <div class="pivot-timeline">⏱ ${p.transition_time}</div>
+          <div style="font-size:.63rem;color:var(--muted2);text-align:right;margin-top:.2rem;">💰 ${p.salary_range}</div>
+          <div style="font-size:.6rem;color:var(--safe);text-align:right;background:var(--safe-dim);border-radius:5px;padding:.2rem .4rem;margin-top:.2rem;">📈 ${p.demand}</div>
+        </div>
+      </div>`;
+  });
+
+  // Scroll to result
+  setTimeout(() => {
+    document.getElementById('resultZone').scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }, 200);
+}
+
+function trackMouse(e, el) {
+  const r = el.getBoundingClientRect();
+  el.style.setProperty('--mx', `${e.clientX - r.left}px`);
+  el.style.setProperty('--my', `${e.clientY - r.top}px`);
+}
+
+// Ctrl+Enter to scan
+document.addEventListener('DOMContentLoaded', () => {
+  document.getElementById('careerInput').addEventListener('keydown', e => {
+    if (e.key === 'Enter' && (e.ctrlKey || e.metaKey)) runScan();
+  });
+});
+</script>
+</body>
+</html>
